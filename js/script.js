@@ -1,5 +1,4 @@
 // ── State ─────────────────────────────────────────────────
-// dateLocale i tr() są dostępne z i18n.js (ładowanego wcześniej)
 const currentMonth    = new Date().toLocaleString(dateLocale, { month: 'long' });
 const currentMonthNum = new Date().getMonth() + 1;
 
@@ -7,13 +6,12 @@ const state = {
   cycle:    'Luteal',
   season:   currentMonth,
   location: { city: '', region: 'dolnośląskie', country: 'Poland' },
-  diet:     'Inflammatory',
+  diets:    new Set(['cycle', 'anti_inflammatory']),
 };
 
 // Zastosuj statyczne tłumaczenia z data-i18n
 applyTranslations();
 
-// Ustaw miesiąc i etykietę fazy w aktualnym języku
 document.getElementById('season-label').textContent = state.season;
 document.getElementById('cycle-label').textContent  = tr(`phases.${state.cycle}`);
 
@@ -55,22 +53,60 @@ const PIN_SVG = `<svg class="food-item__icon" width="20" height="20" viewBox="0 
   <path d="M128,24A80,80,0,1,0,208,104c0,72-80,128-80,128S48,176,48,104A80,80,0,0,1,128,24Zm0,112a32,32,0,1,0-32-32A32,32,0,0,0,128,136Z"/>
 </svg>`;
 
+const REMOVE_SVG = `<svg width="12" height="12" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+  <path d="M205.7,194.3a8.1,8.1,0,0,1,0,11.4,8.2,8.2,0,0,1-11.4,0L128,139.3,61.7,205.7a8.2,8.2,0,0,1-11.4,0,8.1,8.1,0,0,1,0-11.4L116.7,128,50.3,61.7A8.1,8.1,0,0,1,61.7,50.3L128,116.7l66.3-66.4a8.1,8.1,0,0,1,11.4,11.4L139.3,128Z"/>
+</svg>`;
+
+// ── Diet chip names ───────────────────────────────────────
+const DIET_LABELS = {
+  cycle:            () => tr('dietCycle'),
+  anti_inflammatory:() => tr('dietAntiInflammatory'),
+};
+
+// ── Render diet chips ─────────────────────────────────────
+function renderDietChips() {
+  const container = document.getElementById('diet-chips');
+  container.innerHTML = [...state.diets].map(diet => `
+    <div class="chip chip--diet">
+      <span>${DIET_LABELS[diet]()}</span>
+      <button class="chip__remove" data-diet="${diet}" aria-label="Remove">
+        ${REMOVE_SVG}
+      </button>
+    </div>
+  `).join('');
+
+  container.querySelectorAll('.chip__remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.diets.delete(btn.dataset.diet);
+      renderDietChips();
+      renderFoodSlider();
+      updateDietOptions();
+    });
+  });
+}
+
 // ── Food slider — filtrowanie i render ────────────────────
 function renderFoodSlider() {
   const slider   = document.getElementById('food-slider');
   const cycleKey = CYCLE_MAP[state.cycle] || 'lutealna';
-
   const countryName = typeof state.location === 'object'
-    ? state.location.country || 'Polska'
-    : 'Polska';
+    ? state.location.country || 'Poland'
+    : 'Poland';
 
-  const filtered = products
-    .filter(p => p.cycle_phase.includes(cycleKey))
-    .map(p => ({
-      ...p,
-      inSeason: isInSeason(p.months, currentMonthNum),
-      isLocal:  p.country === countryName,
-    }));
+  let filtered = products;
+
+  if (state.diets.has('cycle')) {
+    filtered = filtered.filter(p => p.cycle_phase.includes(cycleKey));
+  }
+  if (state.diets.has('anti_inflammatory')) {
+    filtered = filtered.filter(p => p.anti_inflammatory === true);
+  }
+
+  filtered = filtered.map(p => ({
+    ...p,
+    inSeason: isInSeason(p.months, currentMonthNum),
+    isLocal:  p.country === countryName,
+  }));
 
   const grouped = {};
   filtered.forEach(p => {
@@ -84,9 +120,7 @@ function renderFoodSlider() {
       return (b.regions !== null ? 1 : 0) - (a.regions !== null ? 1 : 0);
     });
     grouped[cat] = grouped[cat].map(p => ({
-      name:     p.name,
-      inSeason: p.inSeason,
-      isLocal:  p.isLocal,
+      name: p.name, inSeason: p.inSeason, isLocal: p.isLocal,
     }));
   });
 
@@ -113,8 +147,6 @@ function renderFoodSlider() {
   `).join('');
 }
 
-renderFoodSlider();
-
 // ── Cycle page ────────────────────────────────────────────
 const pageCycle  = document.getElementById('page-cycle');
 const cycleLabel = document.getElementById('cycle-label');
@@ -124,12 +156,10 @@ function openCyclePage() {
   pageCycle.removeAttribute('aria-hidden');
   updateCycleOptions();
 }
-
 function closeCyclePage() {
   pageCycle.classList.remove('page--open');
   pageCycle.setAttribute('aria-hidden', 'true');
 }
-
 function updateCycleOptions() {
   document.querySelectorAll('.cycle-option').forEach(btn => {
     btn.classList.toggle('cycle-option--selected', btn.dataset.value === state.cycle);
@@ -148,32 +178,55 @@ document.querySelectorAll('.cycle-option').forEach(btn => {
   });
 });
 
+// ── Diet page ─────────────────────────────────────────────
+const pageDiet = document.getElementById('page-diet');
+
+function openDietPage() {
+  pageDiet.classList.add('page--open');
+  pageDiet.removeAttribute('aria-hidden');
+  updateDietOptions();
+}
+function closeDietPage() {
+  pageDiet.classList.remove('page--open');
+  pageDiet.setAttribute('aria-hidden', 'true');
+}
+function updateDietOptions() {
+  document.querySelectorAll('.diet-option').forEach(btn => {
+    btn.classList.toggle('diet-option--selected', state.diets.has(btn.dataset.value));
+  });
+}
+
+document.getElementById('btn-add-diet').addEventListener('click', openDietPage);
+document.getElementById('diet-close').addEventListener('click', closeDietPage);
+
+document.querySelectorAll('.diet-option').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const val = btn.dataset.value;
+    if (state.diets.has(val)) {
+      state.diets.delete(val);
+    } else {
+      state.diets.add(val);
+    }
+    updateDietOptions();
+    renderDietChips();
+    renderFoodSlider();
+  });
+});
+
 // ── Location — geolocation + BigDataCloud reverse geocoding ──
 const locationLabel = document.getElementById('location-label');
-
-function fetchLocation() {
-  if (!navigator.geolocation) return;
-
-  navigator.geolocation.getCurrentPosition(
-    ({ coords }) => reverseGeocode(coords.latitude, coords.longitude),
-    () => {},
-    { timeout: 10000 }
-  );
-}
 
 async function reverseGeocode(lat, lon) {
   try {
     const url  = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
     const res  = await fetch(url);
     const data = await res.json();
-
     const rawRegion = data.principalSubdivision || '';
     state.location = {
       city:    data.city || data.locality || '',
       region:  REGION_MAP[rawRegion] || rawRegion.toLowerCase(),
       country: data.countryName || '',
     };
-
     locationLabel.textContent = state.location.country || state.location.city || t.unknown;
     renderFoodSlider();
   } catch {
@@ -181,4 +234,14 @@ async function reverseGeocode(lat, lon) {
   }
 }
 
-fetchLocation();
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    ({ coords }) => reverseGeocode(coords.latitude, coords.longitude),
+    () => {},
+    { timeout: 10000 }
+  );
+}
+
+// ── Init ──────────────────────────────────────────────────
+renderDietChips();
+renderFoodSlider();

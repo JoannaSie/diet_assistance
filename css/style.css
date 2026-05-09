@@ -249,6 +249,69 @@ body {
   flex-shrink: 0;
 }
 
+/* ── Diet chips container ── */
+#diet-chips {
+  display: contents;
+}
+
+/* ── Chip remove button ── */
+.chip--diet {
+  cursor: default;
+}
+
+.chip__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  transition: background 0.12s, color 0.12s;
+}
+.chip__remove:hover {
+  background: rgba(74,48,40,0.1);
+  color: var(--text-dark);
+}
+
+/* ── Diet options (multiselect) ── */
+.diet-options {
+  list-style: none;
+  padding: 8px 0;
+}
+
+.diet-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 18px 24px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--card-border);
+  font-family: var(--font-body);
+  font-size: 20px;
+  color: var(--text-dark);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+}
+.diet-option:hover { background: var(--chip-bg); }
+
+.diet-option__check {
+  flex-shrink: 0;
+  opacity: 0;
+  color: var(--secondary);
+  transition: opacity 0.15s;
+}
+.diet-option--selected .diet-option__check { opacity: 1; }
+.diet-option--selected { font-weight: 600; }
+
 /* ── Page (slide-in screen) ── */
 .page {
   position: fixed;
