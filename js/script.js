@@ -6,7 +6,7 @@ const state = {
   cycle:    localStorage.getItem('cycle') || 'Luteal',
   season:   currentMonth,
   location: { city: '', region: 'dolnośląskie', country: 'Poland' },
-  diets:    new Set(['anti_inflammatory']),
+  diets:    new Set(['cycle', 'anti_inflammatory']),
 };
 
 // Zastosuj statyczne tłumaczenia z data-i18n
@@ -64,10 +64,18 @@ const DIET_LABELS = {
   anti_inflammatory:() => tr('dietAntiInflammatory'),
 };
 
+// ── Cycle chip visibility ─────────────────────────────────
+function updateCycleChipVisibility() {
+  document.getElementById('chip-cycle-wrapper').style.display =
+    state.diets.has('cycle') ? '' : 'none';
+}
+
 // ── Render diet chips ─────────────────────────────────────
 function renderDietChips() {
   const container = document.getElementById('diet-chips');
-  container.innerHTML = [...state.diets].map(diet => `
+  container.innerHTML = [...state.diets]
+    .filter(diet => diet !== 'cycle')
+    .map(diet => `
     <div class="chip chip--diet">
       <span>${DIET_LABELS[diet]()}</span>
       <button class="chip__remove" data-diet="${diet}" aria-label="Remove">
@@ -97,7 +105,9 @@ function renderFoodSlider() {
 
   let filtered = products;
 
-  filtered = filtered.filter(p => p.cycle_phase.includes(cycleKey));
+  if (state.diets.has('cycle')) {
+    filtered = filtered.filter(p => p.cycle_phase.includes(cycleKey));
+  }
   if (state.diets.has('anti_inflammatory')) {
     filtered = filtered.filter(p => p.anti_inflammatory === true);
   }
@@ -170,6 +180,13 @@ function updateCycleOptions() {
 }
 
 document.getElementById('chip-cycle').addEventListener('click', openCyclePage);
+
+document.getElementById('chip-cycle-remove').addEventListener('click', () => {
+  state.diets.delete('cycle');
+  updateCycleChipVisibility();
+  updateDietOptions();
+  renderFoodSlider();
+});
 document.getElementById('cycle-close').addEventListener('click', closeCyclePage);
 
 document.querySelectorAll('.cycle-option').forEach(btn => {
@@ -213,6 +230,7 @@ document.querySelectorAll('.diet-option').forEach(btn => {
       state.diets.add(val);
     }
     updateDietOptions();
+    updateCycleChipVisibility();
     renderDietChips();
     renderFoodSlider();
   });
@@ -248,5 +266,6 @@ if (navigator.geolocation) {
 }
 
 // ── Init ──────────────────────────────────────────────────
+updateCycleChipVisibility();
 renderDietChips();
 renderFoodSlider();

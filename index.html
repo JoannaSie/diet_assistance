@@ -35,13 +35,20 @@
         </svg>
       </button>
       <div class="criteria__scroll">
-        <button class="chip chip--cycle" id="chip-cycle" data-key="cycle" aria-label="Select cycle phase">
-          <span class="chip__label" data-i18n="cycleLabel">Cycle</span>
-          <span id="cycle-label">Luteal</span>
-          <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
-            <path d="M227.3,73.4,182.6,28.7a16,16,0,0,0-22.6,0L36.7,152a15.9,15.9,0,0,0-4.7,11.3V208a16,16,0,0,0,16,16H92.7A15.9,15.9,0,0,0,104,219.3L227.3,96a16,16,0,0,0,0-22.6ZM92.7,208H48V163.3l88-88,44.7,44.7ZM192,108.7,147.3,64,171.3,40,216,84.7Z"/>
-          </svg>
-        </button>
+        <div class="chip chip--cycle" id="chip-cycle-wrapper">
+          <button class="chip__main" id="chip-cycle" aria-label="Select cycle phase">
+            <span class="chip__label" data-i18n="cycleLabel">Cycle</span>
+            <span id="cycle-label">Luteal</span>
+            <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+              <path d="M227.3,73.4,182.6,28.7a16,16,0,0,0-22.6,0L36.7,152a15.9,15.9,0,0,0-4.7,11.3V208a16,16,0,0,0,16,16H92.7A15.9,15.9,0,0,0,104,219.3L227.3,96a16,16,0,0,0,0-22.6ZM92.7,208H48V163.3l88-88,44.7,44.7ZM192,108.7,147.3,64,171.3,40,216,84.7Z"/>
+            </svg>
+          </button>
+          <button class="chip__remove" id="chip-cycle-remove" aria-label="Remove cycle filter">
+            <svg width="12" height="12" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+              <path d="M205.7,194.3a8.1,8.1,0,0,1,0,11.4,8.2,8.2,0,0,1-11.4,0L128,139.3,61.7,205.7a8.2,8.2,0,0,1-11.4,0,8.1,8.1,0,0,1,0-11.4L116.7,128,50.3,61.7A8.1,8.1,0,0,1,61.7,50.3L128,116.7l66.3-66.4a8.1,8.1,0,0,1,11.4,11.4L139.3,128Z"/>
+            </svg>
+          </button>
+        </div>
         <!-- Diet chips rendered dynamically -->
         <div id="diet-chips"></div>
       </div>
@@ -100,6 +107,14 @@
         </button>
       </header>
       <ul class="diet-options">
+        <li>
+          <button class="diet-option" data-value="cycle">
+            <span data-i18n="dietCycle">Cycle-based</span>
+            <svg class="diet-option__check" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+              <path d="M229.7,77.7l-128,128a8.2,8.2,0,0,1-11.4,0l-56-56A8.1,8.1,0,0,1,45.7,138.3L96,188.7,218.3,66.3a8.1,8.1,0,0,1,11.4,11.4Z"/>
+            </svg>
+          </button>
+        </li>
         <li>
           <button class="diet-option" data-value="anti_inflammatory">
             <span data-i18n="dietAntiInflammatory">Anti-inflammatory</span>

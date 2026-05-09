@@ -142,9 +142,23 @@ body {
 
 .chip--cycle {
   background: var(--chip-bg);
-  cursor: pointer;
+  cursor: default;
+  padding: 8px 8px 8px 16px;
 }
-.chip--cycle:hover { filter: brightness(0.97); }
+
+.chip__main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--text-dark);
+}
+.chip__main:hover { opacity: 0.8; }
 
 .chip__label {
   color: var(--text-muted) !important;
