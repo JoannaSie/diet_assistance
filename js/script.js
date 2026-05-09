@@ -6,7 +6,7 @@ const state = {
   cycle:    localStorage.getItem('cycle') || 'Luteal',
   season:   currentMonth,
   location: { city: '', region: 'dolnośląskie', country: 'Poland' },
-  diets:    new Set(['anti_inflammatory']),
+  diets:    new Set(['cycle', 'anti_inflammatory']),
 };
 
 // Zastosuj statyczne tłumaczenia z data-i18n
@@ -97,7 +97,9 @@ function renderFoodSlider() {
 
   let filtered = products;
 
-  filtered = filtered.filter(p => p.cycle_phase.includes(cycleKey));
+  if (state.diets.has('cycle')) {
+    filtered = filtered.filter(p => p.cycle_phase.includes(cycleKey));
+  }
   if (state.diets.has('anti_inflammatory')) {
     filtered = filtered.filter(p => p.anti_inflammatory === true);
   }
