@@ -105,12 +105,13 @@ body {
   width: 40px;
   height: 40px;
   border-radius: var(--radius-btn);
-  background: var(--btn-bg);
-  border: 1px solid var(--btn-border);
-  cursor: default;
-  color: var(--text-muted);
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  cursor: pointer;
+  color: var(--text-dark);
   padding: 0;
 }
+.criteria__add:hover { filter: brightness(0.97); }
 
 .criteria__scroll {
   display: flex;
@@ -266,10 +267,6 @@ body {
 }
 
 .chip__remove {
-  display: none;
-}
-
-.chip__remove--visible {
   display: flex;
   align-items: center;
   justify-content: center;

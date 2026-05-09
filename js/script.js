@@ -78,6 +78,7 @@ function renderDietChips() {
 
   container.querySelectorAll('.chip__remove').forEach(btn => {
     btn.addEventListener('click', () => {
+      if (state.diets.size <= 1) return;
       state.diets.delete(btn.dataset.diet);
       renderDietChips();
       renderFoodSlider();
@@ -203,6 +204,7 @@ document.querySelectorAll('.diet-option').forEach(btn => {
   btn.addEventListener('click', () => {
     const val = btn.dataset.value;
     if (state.diets.has(val)) {
+      if (state.diets.size <= 1) return;
       state.diets.delete(val);
     } else {
       state.diets.add(val);
