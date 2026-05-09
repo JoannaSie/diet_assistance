@@ -266,6 +266,12 @@ if (!localStorage.getItem('location') && navigator.geolocation) {
   );
 }
 
+// ── Header scroll shadow ──────────────────────────────────
+const headerEl = document.querySelector('.header');
+window.addEventListener('scroll', () => {
+  headerEl.classList.toggle('header--scrolled', window.scrollY > 0);
+}, { passive: true });
+
 // ── Init ──────────────────────────────────────────────────
 document.getElementById('location-label').textContent =
   state.location.country || state.location.city || 'Poland';

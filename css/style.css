@@ -47,7 +47,10 @@ body {
   top: 0;
   z-index: 10;
   padding-top: 56px;
+  padding-bottom: 0;
+  transition: padding-bottom 0.2s;
 }
+.header--scrolled { padding-bottom: 16px; }
 
 .header__inner {
   display: flex;
