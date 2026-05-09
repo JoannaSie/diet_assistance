@@ -3,7 +3,7 @@ const currentMonth    = new Date().toLocaleString(dateLocale, { month: 'long' })
 const currentMonthNum = new Date().getMonth() + 1;
 
 const state = {
-  cycle:    'Luteal',
+  cycle:    localStorage.getItem('cycle') || 'Luteal',
   season:   currentMonth,
   location: { city: '', region: 'dolnośląskie', country: 'Poland' },
   diets:    new Set(['anti_inflammatory']),
@@ -171,6 +171,7 @@ document.getElementById('cycle-close').addEventListener('click', closeCyclePage)
 document.querySelectorAll('.cycle-option').forEach(btn => {
   btn.addEventListener('click', () => {
     state.cycle = btn.dataset.value;
+    localStorage.setItem('cycle', state.cycle);
     cycleLabel.textContent = tr(`phases.${state.cycle}`);
     closeCyclePage();
     renderFoodSlider();
