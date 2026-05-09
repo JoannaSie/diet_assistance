@@ -5,7 +5,7 @@ const currentMonthNum = new Date().getMonth() + 1;
 const state = {
   cycle:    localStorage.getItem('cycle') || 'Luteal',
   season:   currentMonth,
-  location: { city: '', region: 'dolnośląskie', country: 'Poland' },
+  location: JSON.parse(localStorage.getItem('location') || 'null') || { city: '', region: 'dolnośląskie', country: 'Poland' },
   diets:    new Set(['cycle', 'anti_inflammatory']),
 };
 
@@ -250,6 +250,7 @@ async function reverseGeocode(lat, lon) {
       region:  REGION_MAP[rawRegion] || rawRegion.toLowerCase(),
       country: data.countryName || '',
     };
+    localStorage.setItem('location', JSON.stringify(state.location));
     locationLabel.textContent = state.location.country || state.location.city || t.unknown;
     renderFoodSlider();
   } catch {
@@ -257,7 +258,7 @@ async function reverseGeocode(lat, lon) {
   }
 }
 
-if (navigator.geolocation) {
+if (!localStorage.getItem('location') && navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(
     ({ coords }) => reverseGeocode(coords.latitude, coords.longitude),
     () => {},
@@ -266,6 +267,8 @@ if (navigator.geolocation) {
 }
 
 // ── Init ──────────────────────────────────────────────────
+document.getElementById('location-label').textContent =
+  state.location.country || state.location.city || 'Poland';
 updateCycleChipVisibility();
 renderDietChips();
 renderFoodSlider();
