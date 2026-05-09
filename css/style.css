@@ -94,7 +94,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 20px;
+  padding: 8px 0 8px 20px;
 }
 
 .criteria__add {
@@ -416,7 +416,7 @@ body {
   .header { padding-top: 64px; }
   .header__inner { padding: 0 48px 0 88px; }
 
-  .criteria { padding: 8px 48px; }
+  .criteria { padding: 8px 0 8px 48px; }
 
   .legend { padding: 0 48px; }
 
@@ -447,7 +447,7 @@ body {
   }
 
   .header   { grid-area: header; }
-  .criteria { grid-area: criteria; padding: 8px 64px; }
+  .criteria { grid-area: criteria; padding: 8px 0 8px 64px; }
   .legend   { grid-area: legend; padding: 0 64px; }
   .food-section {
     grid-area: food;
