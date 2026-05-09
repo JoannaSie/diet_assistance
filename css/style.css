@@ -119,9 +119,9 @@ body {
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  padding-right: 20px;
 }
 .criteria__scroll::-webkit-scrollbar { display: none; }
-.criteria__scroll > :last-child { margin-right: 20px; }
 
 /* ── Chip ── */
 .chip {
@@ -417,7 +417,7 @@ body {
   .header__inner { padding: 0 48px 0 88px; }
 
   .criteria { padding: 8px 0 8px 48px; }
-  .criteria__scroll > :last-child { margin-right: 48px; }
+  .criteria__scroll { padding-right: 48px; }
 
   .legend { padding: 0 48px; }
 
@@ -450,7 +450,7 @@ body {
 
   .header   { grid-area: header; }
   .criteria { grid-area: criteria; padding: 8px 0 8px 64px; }
-  .criteria__scroll > :last-child { margin-right: 64px; }
+  .criteria__scroll { padding-right: 64px; }
   .legend   { grid-area: legend; padding: 0 64px; }
   .food-section {
     grid-area: food;
