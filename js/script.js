@@ -1,6 +1,7 @@
 // ── State ─────────────────────────────────────────────────
-const currentMonth     = new Date().toLocaleString('en-US', { month: 'long' });
-const currentMonthNum  = new Date().getMonth() + 1;
+// dateLocale i tr() są dostępne z i18n.js (ładowanego wcześniej)
+const currentMonth    = new Date().toLocaleString(dateLocale, { month: 'long' });
+const currentMonthNum = new Date().getMonth() + 1;
 
 const state = {
   cycle:    'Luteal',
@@ -9,7 +10,12 @@ const state = {
   diet:     'Inflammatory',
 };
 
+// Zastosuj statyczne tłumaczenia z data-i18n
+applyTranslations();
+
+// Ustaw miesiąc i etykietę fazy w aktualnym języku
 document.getElementById('season-label').textContent = state.season;
+document.getElementById('cycle-label').textContent  = tr(`phases.${state.cycle}`);
 
 // ── Mapowania ──────────────────────────────────────────────
 const CYCLE_MAP = {
@@ -20,24 +26,24 @@ const CYCLE_MAP = {
 };
 
 const REGION_MAP = {
-  'Lower Silesian Voivodeship':        'dolnośląskie',
-  'Kuyavian-Pomeranian Voivodeship':   'kujawsko-pomorskie',
-  'Lublin Voivodeship':                'lubelskie',
-  'Lubusz Voivodeship':                'lubuskie',
-  'Łódź Voivodeship':                  'łódzkie',
-  'Lodz Voivodeship':                  'łódzkie',
-  'Lesser Poland Voivodeship':         'małopolskie',
-  'Masovian Voivodeship':              'mazowieckie',
-  'Opole Voivodeship':                 'opolskie',
-  'Subcarpathian Voivodeship':         'podkarpackie',
-  'Podlaskie Voivodeship':             'podlaskie',
-  'Pomeranian Voivodeship':            'pomorskie',
-  'Silesian Voivodeship':              'śląskie',
-  'Świętokrzyskie Voivodeship':        'świętokrzyskie',
-  'Swietokrzyskie Voivodeship':        'świętokrzyskie',
-  'Warmian-Masurian Voivodeship':      'warmińsko-mazurskie',
-  'Greater Poland Voivodeship':        'wielkopolskie',
-  'West Pomeranian Voivodeship':       'zachodniopomorskie',
+  'Lower Silesian Voivodeship':      'dolnośląskie',
+  'Kuyavian-Pomeranian Voivodeship': 'kujawsko-pomorskie',
+  'Lublin Voivodeship':              'lubelskie',
+  'Lubusz Voivodeship':              'lubuskie',
+  'Łódź Voivodeship':                'łódzkie',
+  'Lodz Voivodeship':                'łódzkie',
+  'Lesser Poland Voivodeship':       'małopolskie',
+  'Masovian Voivodeship':            'mazowieckie',
+  'Opole Voivodeship':               'opolskie',
+  'Subcarpathian Voivodeship':       'podkarpackie',
+  'Podlaskie Voivodeship':           'podlaskie',
+  'Pomeranian Voivodeship':          'pomorskie',
+  'Silesian Voivodeship':            'śląskie',
+  'Świętokrzyskie Voivodeship':      'świętokrzyskie',
+  'Swietokrzyskie Voivodeship':      'świętokrzyskie',
+  'Warmian-Masurian Voivodeship':    'warmińsko-mazurskie',
+  'Greater Poland Voivodeship':      'wielkopolskie',
+  'West Pomeranian Voivodeship':     'zachodniopomorskie',
 };
 
 // ── SVG icons ─────────────────────────────────────────────
@@ -87,13 +93,13 @@ function renderFoodSlider() {
   const categories = Object.keys(grouped);
 
   if (categories.length === 0) {
-    slider.innerHTML = '<p class="food-slider--empty">Brak produktów dla wybranych kryteriów.</p>';
+    slider.innerHTML = `<p class="food-slider--empty">${t.empty}</p>`;
     return;
   }
 
   slider.innerHTML = categories.map(cat => `
     <div class="food-category">
-      <span class="food-category__name">${cat}</span>
+      <span class="food-category__name">${trCategory(cat)}</span>
       <div class="food-category__list">
         ${grouped[cat].map(({ name, inSeason, isLocal }) => `
           <div class="food-item">
@@ -136,7 +142,7 @@ document.getElementById('cycle-close').addEventListener('click', closeCyclePage)
 document.querySelectorAll('.cycle-option').forEach(btn => {
   btn.addEventListener('click', () => {
     state.cycle = btn.dataset.value;
-    cycleLabel.textContent = state.cycle;
+    cycleLabel.textContent = tr(`phases.${state.cycle}`);
     closeCyclePage();
     renderFoodSlider();
   });
@@ -168,10 +174,10 @@ async function reverseGeocode(lat, lon) {
       country: data.countryName || '',
     };
 
-    locationLabel.textContent = state.location.country || state.location.city || 'Unknown';
+    locationLabel.textContent = state.location.country || state.location.city || t.unknown;
     renderFoodSlider();
   } catch {
-    locationLabel.textContent = state.location.country || 'Unknown';
+    locationLabel.textContent = state.location.country || t.unknown;
   }
 }
 
