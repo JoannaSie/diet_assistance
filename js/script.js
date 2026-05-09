@@ -102,11 +102,14 @@ function renderFoodSlider() {
     filtered = filtered.filter(p => p.anti_inflammatory === true);
   }
 
-  filtered = filtered.map(p => ({
-    ...p,
-    inSeason: isInSeason(p.months, currentMonthNum),
-    isLocal:  p.country === countryName,
-  }));
+  filtered = filtered.map(p => {
+    const avail = p.localAvailability?.[countryName];
+    return {
+      ...p,
+      inSeason: avail ? isInSeason(avail.months, currentMonthNum) : false,
+      isLocal:  !!avail,
+    };
+  });
 
   const grouped = {};
   filtered.forEach(p => {
@@ -117,7 +120,7 @@ function renderFoodSlider() {
     grouped[cat].sort((a, b) => {
       if (b.isLocal  !== a.isLocal)  return b.isLocal  - a.isLocal;
       if (b.inSeason !== a.inSeason) return b.inSeason - a.inSeason;
-      return (b.regions !== null ? 1 : 0) - (a.regions !== null ? 1 : 0);
+      return 0;
     });
     grouped[cat] = grouped[cat].map(p => ({
       name: p.name, inSeason: p.inSeason, isLocal: p.isLocal,
