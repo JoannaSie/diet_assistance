@@ -54,8 +54,8 @@ const PIN_SVG = `<svg class="food-item__icon" width="20" height="20" viewBox="0 
   <path d="M12 11C12.2652 11 12.5196 10.8946 12.7071 10.7071C12.8946 10.5196 13 10.2652 13 10C13 9.73478 12.8946 9.48043 12.7071 9.29289C12.5196 9.10536 12.2652 9 12 9C11.7348 9 11.4804 9.10536 11.2929 9.29289C11.1054 9.48043 11 9.73478 11 10C11 10.2652 11.1054 10.5196 11.2929 10.7071C11.4804 10.8946 11.7348 11 12 11Z" fill="#3a8a6e" stroke="#3a8a6e"/>
 </svg>`;
 
-const REMOVE_SVG = `<svg width="12" height="12" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
-  <path d="M205.7,194.3a8.1,8.1,0,0,1,0,11.4,8.2,8.2,0,0,1-11.4,0L128,139.3,61.7,205.7a8.2,8.2,0,0,1-11.4,0,8.1,8.1,0,0,1,0-11.4L116.7,128,50.3,61.7A8.1,8.1,0,0,1,61.7,50.3L128,116.7l66.3-66.4a8.1,8.1,0,0,1,11.4,11.4L139.3,128Z"/>
+const REMOVE_SVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M6.758 17.243L12.001 12L17.244 17.243M17.244 6.75702L12 12L6.758 6.75702"/>
 </svg>`;
 
 // ── Diet chip names ───────────────────────────────────────
