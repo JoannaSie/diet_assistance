@@ -6,6 +6,8 @@
   --secondary:     #3a8a6e;
   --chip-bg:       #eaf5f0;
   --chip-border:   #b8dace;
+  --btn-bg:        #f0ede8;
+  --btn-border:    #c8c2ba;
   --card-border:   #f0ede8;
   --text-dark:     #4a3028;
   --text-muted:    #7a736a;
@@ -80,10 +82,10 @@ body {
   width: 40px;
   height: 40px;
   border-radius: var(--radius-btn);
-  background: var(--chip-bg);
-  border: 1px solid var(--chip-border);
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
   cursor: default;
-  color: var(--text-dark);
+  color: var(--text-muted);
   padding: 0;
 }
 
