@@ -179,7 +179,11 @@ body {
 /* ── Food section ── */
 .food-section {
   flex: 1;
-  padding: 0 20px 32px;
+  padding: 0 0 32px;
+}
+
+.food-category:first-child {
+  margin-left: 20px;
 }
 
 /* ── Food Slider ── */
@@ -405,7 +409,8 @@ body {
 
   .legend { padding: 0 48px; }
 
-  .food-section { padding: 0 48px 48px; }
+  .food-section { padding: 0 0 48px; }
+  .food-category:first-child { margin-left: 48px; }
 
   .page {
     max-width: 480px;
@@ -435,6 +440,7 @@ body {
   .legend   { grid-area: legend; padding: 0 64px; }
   .food-section {
     grid-area: food;
-    padding: 0 64px 64px;
+    padding: 0 0 64px;
   }
+  .food-category:first-child { margin-left: 64px; }
 }
