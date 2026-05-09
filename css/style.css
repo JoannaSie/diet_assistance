@@ -85,7 +85,7 @@ body {
   background: var(--btn-bg);
   border: 1px solid var(--btn-border);
   cursor: default;
-  color: var(--text-muted);
+  color: #d1d5db;
   padding: 0;
 }
 
