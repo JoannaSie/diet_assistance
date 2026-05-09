@@ -6,7 +6,7 @@ const currentMonthNum = new Date().getMonth() + 1;
 const state = {
   cycle:    'Luteal',
   season:   currentMonth,
-  location: { city: '', region: 'dolnośląskie', country: 'Polska' },
+  location: { city: '', region: 'dolnośląskie', country: 'Poland' },
   diet:     'Inflammatory',
 };
 
