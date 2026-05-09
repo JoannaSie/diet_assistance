@@ -121,6 +121,7 @@ body {
   -ms-overflow-style: none;
 }
 .criteria__scroll::-webkit-scrollbar { display: none; }
+.criteria__scroll > :last-child { margin-right: 20px; }
 
 /* ── Chip ── */
 .chip {
@@ -196,9 +197,8 @@ body {
   padding: 0 0 32px;
 }
 
-.food-category:first-child {
-  margin-left: 20px;
-}
+.food-category:first-child { margin-left: 20px; }
+.food-category:last-child  { margin-right: 20px; }
 
 /* ── Food Slider ── */
 .food-slider {
@@ -417,11 +417,13 @@ body {
   .header__inner { padding: 0 48px 0 88px; }
 
   .criteria { padding: 8px 0 8px 48px; }
+  .criteria__scroll > :last-child { margin-right: 48px; }
 
   .legend { padding: 0 48px; }
 
   .food-section { padding: 0 0 48px; }
   .food-category:first-child { margin-left: 48px; }
+  .food-category:last-child  { margin-right: 48px; }
 
   .page {
     max-width: 480px;
@@ -448,10 +450,12 @@ body {
 
   .header   { grid-area: header; }
   .criteria { grid-area: criteria; padding: 8px 0 8px 64px; }
+  .criteria__scroll > :last-child { margin-right: 64px; }
   .legend   { grid-area: legend; padding: 0 64px; }
   .food-section {
     grid-area: food;
     padding: 0 0 64px;
   }
   .food-category:first-child { margin-left: 64px; }
+  .food-category:last-child  { margin-right: 64px; }
 }
