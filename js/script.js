@@ -62,6 +62,7 @@ const REMOVE_SVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" 
 const DIET_LABELS = {
   cycle:            () => tr('dietCycle'),
   anti_inflammatory:() => tr('dietAntiInflammatory'),
+  endo_friendly:    () => tr('dietEndoFriendly'),
 };
 
 // ── Cycle chip visibility ─────────────────────────────────
@@ -110,6 +111,9 @@ function renderFoodSlider() {
   }
   if (state.diets.has('anti_inflammatory')) {
     filtered = filtered.filter(p => p.anti_inflammatory === true);
+  }
+  if (state.diets.has('endo_friendly')) {
+    filtered = filtered.filter(p => p.endo_friendly === true);
   }
 
   filtered = filtered.map(p => {
