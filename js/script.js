@@ -6,7 +6,7 @@ const state = {
   cycle:    localStorage.getItem('cycle') || 'Luteal',
   season:   currentMonth,
   location: { city: '', region: 'dolnośląskie', country: 'Poland' },
-  diets:    new Set(['cycle', 'anti_inflammatory']),
+  diets:    new Set(['cycle', 'anti_inflammatory', 'endo_friendly']),
 };
 
 // Zastosuj statyczne tłumaczenia z data-i18n
