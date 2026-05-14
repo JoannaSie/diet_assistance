@@ -706,7 +706,7 @@ const products = [
     name: 'Pineapple', name_pl: 'Ananas', category: 'Fruits',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true, endo_friendly: true,
     localAvailability: {
-      Costa Rica: { regions: null, months: [1, 12] },
+      'Costa Rica': { regions: null, months: [1, 12] },
     },
   },
   {
