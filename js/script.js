@@ -5,7 +5,7 @@ const currentMonthNum = new Date().getMonth() + 1;
 const state = {
   cycle:    localStorage.getItem('cycle') || 'Luteal',
   season:   currentMonth,
-  location: JSON.parse(localStorage.getItem('location') || 'null') || { city: '', region: 'dolnośląskie', country: 'Poland' },
+  location: { city: '', region: 'dolnośląskie', country: 'Poland' },
   diets:    new Set(['cycle', 'anti_inflammatory']),
 };
 
@@ -251,7 +251,7 @@ async function reverseGeocode(lat, lon) {
       region:  REGION_MAP[rawRegion] || rawRegion.toLowerCase(),
       country: data.countryName || '',
     };
-    localStorage.setItem('location', JSON.stringify(state.location));
+    localStorage.setItem('geo_permission', 'granted');
     locationLabel.textContent = state.location.country || state.location.city || t.unknown;
     renderFoodSlider();
   } catch {
@@ -259,7 +259,15 @@ async function reverseGeocode(lat, lon) {
   }
 }
 
-if (!localStorage.getItem('location') && navigator.geolocation) {
+if (navigator.geolocation && localStorage.getItem('geo_permission') === 'granted') {
+  // Permission already granted before — silently re-fetch location
+  navigator.geolocation.getCurrentPosition(
+    ({ coords }) => reverseGeocode(coords.latitude, coords.longitude),
+    () => {},
+    { timeout: 10000 }
+  );
+} else if (navigator.geolocation) {
+  // First visit — ask for permission; on success save the flag
   navigator.geolocation.getCurrentPosition(
     ({ coords }) => reverseGeocode(coords.latitude, coords.longitude),
     () => {},
