@@ -1,0 +1,56 @@
+{
+  "source": "Alisa Vitti, WomanCode / In the Flo – tabela str. 129–130 (wydanie polskie: Rozdział 4)",
+
+  "phases": [
+    {
+      "id": "folikularna",
+      "label": "Folikularna",
+      "week": 2,
+      "days": "Dni 6–13",
+      "season": "Wiosna",
+      "description": "Lekkie, świeże, energizujące jedzenie. Rośnie poziom estrogenów, wzrasta energia i nastrój.",
+      "color": "#4CAF50"
+    },
+    {
+      "id": "owulacyjna",
+      "label": "Owulacyjna",
+      "week": 3,
+      "days": "Dni 14–17",
+      "season": "Lato",
+      "description": "Oczyszczające, bogate w błonnik. Wspierają metabolizm nadmiaru estrogenów podczas szczytu cyklu.",
+      "color": "#FF9800"
+    },
+    {
+      "id": "lutealna",
+      "label": "Lutealna",
+      "week": 4,
+      "days": "Dni 18–28",
+      "season": "Jesień",
+      "description": "Sycące, rozgrzewające, złożone węglowodany. Rośnie progesteron, metabolizm przyspiesza.",
+      "color": "#9C27B0"
+    },
+    {
+      "id": "menstruacyjna",
+      "label": "Miesiączka",
+      "week": 1,
+      "days": "Dni 1–5",
+      "season": "Zima",
+      "description": "Rozgrzewające, bogate w żelazo i minerały uzupełniające straty z krwawienia. Czas odpoczynku.",
+      "color": "#E91E63"
+    }
+  ],
+
+  "categories": [
+    { "id": "grains",       "label": "Zboża",                                    "label_en": "Grains",         "icon": "🌾" },
+    { "id": "vegetables",   "label": "Warzywa",                                  "label_en": "Vegetables",     "icon": "🥦" },
+    { "id": "fruits",       "label": "Owoce",                                    "label_en": "Fruits",         "icon": "🍓" },
+    { "id": "legumes",      "label": "Strączkowe",                               "label_en": "Legumes",        "icon": "🫘" },
+    { "id": "nuts & seeds", "label": "Orzechy i nasiona",                        "label_en": "Nuts & Seeds",   "icon": "🥜" },
+    { "id": "meat",         "label": "Mięso i produkty pochodzenia zwierzęcego", "label_en": "Meat",           "icon": "🥩" },
+    { "id": "seafood",      "label": "Owoce morza",                              "label_en": "Seafood",        "icon": "🐟" },
+    { "id": "oils",         "label": "Oleje",                                    "label_en": "Oils",           "icon": "🫙" },
+    { "id": "spices",       "label": "Przyprawy i zioła",                        "label_en": "Spices & Herbs", "icon": "🌿" },
+    { "id": "beverages",    "label": "Napoje",                                   "label_en": "Beverages",      "icon": "🍵" },
+    { "id": "other",        "label": "Inne",                                     "label_en": "Other",          "icon": "🧂" }
+  ]
+}

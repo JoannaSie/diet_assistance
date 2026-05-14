@@ -1,20 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// DATA MODEL — Option A: single file, multi-country localAvailability
-// ─────────────────────────────────────────────────────────────────────────────
-//
-// Each product has:
-//   name             — product name (string)
-//   category         — category (string)
-//   cycle_phase      — menstrual cycle phases (array)
-//   anti_inflammatory — true / false
-//   localAvailability — object keyed by country name:
-//       regions: null   → available nationwide in that country (or imported)
-//       regions: array  → available only in listed regions
-//       months: [start, end] → season (if start > end, crosses January)
-//
-// To add a new country: add a new key inside localAvailability.
-// Products available in only one country have a single key.
-// Imported goods (no regional filtering) use regions: null.
+// DATA MODEL
+// Each product: name (EN), name_pl (PL), category, cycle_phase, anti_inflammatory, localAvailability
+// localAvailability[country] = { regions: null | string[], months: [start, end] }
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ── HELPER: season check ──────────────────────────────────────────────────────
@@ -50,12 +37,14 @@ const ALL_BULGARIA = [
   'Vidin', 'Vratsa', 'Yambol',
 ];
 
+const ALL_PHASES = ['folikularna', 'owulacyjna', 'lutealna', 'menstruacyjna'];
+
 // ── PRODUCTS ──────────────────────────────────────────────────────────────────
 const products = [
 
   // ── GRAINS ─────────────────────────────────────────────────────────────────
   {
-    name: 'Oats', category: 'Grains',
+    name: 'Oats', name_pl: 'Owies', category: 'Grains',
     cycle_phase: ['folikularna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [1, 12] },
@@ -63,14 +52,14 @@ const products = [
     },
   },
   {
-    name: 'Rye', category: 'Grains',
+    name: 'Rye', name_pl: 'Żyto', category: 'Grains',
     cycle_phase: ['folikularna'], anti_inflammatory: true,
     localAvailability: {
       Poland: { regions: ['warmińsko-mazurskie','podlaskie','mazowieckie','lubuskie','kujawsko-pomorskie'], months: [1, 12] },
     },
   },
   {
-    name: 'Wheat', category: 'Grains',
+    name: 'Wheat', name_pl: 'Pszenica', category: 'Grains',
     cycle_phase: ['folikularna'], anti_inflammatory: false,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [1, 12] },
@@ -78,14 +67,14 @@ const products = [
     },
   },
   {
-    name: 'Spelt', category: 'Grains',
+    name: 'Spelt', name_pl: 'Orkisz', category: 'Grains',
     cycle_phase: ['folikularna'], anti_inflammatory: true,
     localAvailability: {
       Poland: { regions: ['dolnośląskie','opolskie','śląskie','małopolskie','podkarpackie'], months: [1, 12] },
     },
   },
   {
-    name: 'Barley', category: 'Grains',
+    name: 'Barley', name_pl: 'Jęczmień', category: 'Grains',
     cycle_phase: ['folikularna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [1, 12] },
@@ -93,7 +82,7 @@ const products = [
     },
   },
   {
-    name: 'Corn', category: 'Grains',
+    name: 'Corn', name_pl: 'Kukurydza', category: 'Grains',
     cycle_phase: ['owulacyjna'], anti_inflammatory: false,
     localAvailability: {
       Poland:   { regions: ['łódzkie','mazowieckie','lubelskie','kujawsko-pomorskie','wielkopolskie'], months: [7, 10] },
@@ -101,42 +90,42 @@ const products = [
     },
   },
   {
-    name: 'Amaranth', category: 'Grains',
+    name: 'Amaranth', name_pl: 'Amarantus', category: 'Grains',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Peru: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Quinoa', category: 'Grains',
+    name: 'Quinoa', name_pl: 'Quinoa', category: 'Grains',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Peru: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Brown rice', category: 'Grains',
-    cycle_phase: ['lutealna'], anti_inflammatory: false,
+    name: 'Brown rice', name_pl: 'Ryż brązowy', category: 'Grains',
+    cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Thailand: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Millet', category: 'Grains',
+    name: 'Millet', name_pl: 'Kasza jaglana', category: 'Grains',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       India: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Buckwheat', category: 'Grains',
+    name: 'Buckwheat', name_pl: 'Kasza gryczana', category: 'Grains',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland: { regions: ['podlaskie','warmińsko-mazurskie','mazowieckie','lubelskie','podkarpackie'], months: [1, 12] },
     },
   },
   {
-    name: 'Wild rice', category: 'Grains',
+    name: 'Wild rice', name_pl: 'Ryż dziki', category: 'Grains',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       USA: { regions: null, months: [1, 12] },
@@ -145,70 +134,7 @@ const products = [
 
   // ── VEGETABLES ─────────────────────────────────────────────────────────────
   {
-    name: 'Broccoli', category: 'Vegetables',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Poland:   { regions: ALL_POLAND,   months: [6, 10] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [5, 10] },
-    },
-  },
-  {
-    name: 'Carrots', category: 'Vegetables',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Poland:   { regions: ALL_POLAND,   months: [7, 11] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [6, 11] },
-    },
-  },
-  {
-    name: 'Lettuce', category: 'Vegetables',
-    cycle_phase: ['folikularna'], anti_inflammatory: false,
-    localAvailability: {
-      Poland:   { regions: ALL_POLAND,   months: [4, 10] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [3, 11] },
-    },
-  },
-  {
-    name: 'Parsley', category: 'Vegetables',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Poland:   { regions: ALL_POLAND,   months: [6, 11] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [5, 11] },
-    },
-  },
-  {
-    name: 'Green peas', category: 'Vegetables',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Poland:   { regions: ALL_POLAND,   months: [5, 7] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [4, 6] },
-    },
-  },
-  {
-    name: 'Rhubarb', category: 'Vegetables',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Poland: { regions: ALL_POLAND, months: [4, 6] },
-    },
-  },
-  {
-    name: 'Green beans', category: 'Vegetables',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Poland:   { regions: ALL_POLAND,   months: [6, 9] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [5, 9] },
-    },
-  },
-  {
-    name: 'Zucchini', category: 'Vegetables',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Poland:   { regions: ALL_POLAND,   months: [6, 9] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [5, 10] },
-    },
-  },
-  {
-    name: 'Artichokes', category: 'Vegetables',
+    name: 'Artichokes', name_pl: 'Karczochy', category: 'Vegetables',
     cycle_phase: ['folikularna'], anti_inflammatory: true,
     localAvailability: {
       Italy:    { regions: null, months: [1, 12] },
@@ -216,7 +142,70 @@ const products = [
     },
   },
   {
-    name: 'Asparagus', category: 'Vegetables',
+    name: 'Broccoli', name_pl: 'Brokuły', category: 'Vegetables',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [6, 10] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [5, 10] },
+    },
+  },
+  {
+    name: 'Carrots', name_pl: 'Marchew', category: 'Vegetables',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [7, 11] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [6, 11] },
+    },
+  },
+  {
+    name: 'Lettuce', name_pl: 'Sałata', category: 'Vegetables',
+    cycle_phase: ['folikularna'], anti_inflammatory: false,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [4, 10] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [3, 11] },
+    },
+  },
+  {
+    name: 'Parsley', name_pl: 'Pietruszka', category: 'Vegetables',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [6, 11] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [5, 11] },
+    },
+  },
+  {
+    name: 'Green peas', name_pl: 'Zielony groszek', category: 'Vegetables',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [5, 7] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [4, 6] },
+    },
+  },
+  {
+    name: 'Rhubarb', name_pl: 'Rabarbar', category: 'Vegetables',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland: { regions: ALL_POLAND, months: [4, 6] },
+    },
+  },
+  {
+    name: 'Green beans', name_pl: 'Fasolka szparagowa', category: 'Vegetables',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [6, 9] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [5, 9] },
+    },
+  },
+  {
+    name: 'Zucchini', name_pl: 'Cukinia', category: 'Vegetables',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [6, 9] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [5, 10] },
+    },
+  },
+  {
+    name: 'Asparagus', name_pl: 'Szparagi', category: 'Vegetables',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['dolnośląskie','kujawsko-pomorskie','wielkopolskie','łódzkie','lubuskie'], months: [4, 6] },
@@ -224,7 +213,7 @@ const products = [
     },
   },
   {
-    name: 'Red bell pepper', category: 'Vegetables',
+    name: 'Red bell pepper', name_pl: 'Czerwona papryka', category: 'Vegetables',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['lubelskie','mazowieckie','łódzkie','małopolskie','podkarpackie'], months: [7, 10] },
@@ -232,7 +221,7 @@ const products = [
     },
   },
   {
-    name: 'Brussels sprouts', category: 'Vegetables',
+    name: 'Brussels sprouts', name_pl: 'Brukselka', category: 'Vegetables',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [9, 12] },
@@ -240,7 +229,7 @@ const products = [
     },
   },
   {
-    name: 'Chard (botwinka)', category: 'Vegetables',
+    name: 'Chard', name_pl: 'Botwinka', category: 'Vegetables',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [5, 8] },
@@ -248,31 +237,39 @@ const products = [
     },
   },
   {
-    name: 'Spinach', category: 'Vegetables',
+    name: 'Chicory', name_pl: 'Cykoria', category: 'Vegetables',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
-      Poland:   { regions: ['mazowieckie','wielkopolskie','dolnośląskie','kujawsko-pomorskie','łódzkie'], months: [4, 6] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [3, 5] },
+      Poland:   { regions: ALL_POLAND,   months: [5, 10] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [4, 10] },
     },
   },
   {
-    name: 'Tomato', category: 'Vegetables',
+    name: 'Endive', name_pl: 'Endywia', category: 'Vegetables',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
-      Poland:   { regions: ['łódzkie','mazowieckie','lubelskie','małopolskie','podkarpackie','świętokrzyskie'], months: [7, 9] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [6, 10] },
+      Poland:   { regions: ALL_POLAND,   months: [8, 11] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [7, 11] },
     },
   },
   {
-    name: 'Eggplant', category: 'Vegetables',
+    name: 'Escarole', name_pl: 'Eskariola', category: 'Vegetables',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
-      Spain:    { regions: null,         months: [1, 12] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [6, 10] },
+      Poland:   { regions: ALL_POLAND,   months: [8, 11] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [7, 11] },
     },
   },
   {
-    name: 'Shallot', category: 'Vegetables',
+    name: 'Okra', name_pl: 'Okra', category: 'Vegetables',
+    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Bulgaria: { regions: ['Plovdiv','Haskovo','Kardzhali','Stara Zagora','Blagoevgrad'], months: [7, 10] },
+      Spain:    { regions: null, months: [6, 10] },
+    },
+  },
+  {
+    name: 'Shallot', name_pl: 'Szalotka', category: 'Vegetables',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [6, 10] },
@@ -280,7 +277,15 @@ const products = [
     },
   },
   {
-    name: 'Chives', category: 'Vegetables',
+    name: 'Spinach', name_pl: 'Szpinak', category: 'Vegetables',
+    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ['mazowieckie','wielkopolskie','dolnośląskie','kujawsko-pomorskie','łódzkie'], months: [4, 6] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [3, 5] },
+    },
+  },
+  {
+    name: 'Chives', name_pl: 'Szczypiorek', category: 'Vegetables',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [4, 10] },
@@ -288,7 +293,7 @@ const products = [
     },
   },
   {
-    name: 'Dandelion', category: 'Vegetables',
+    name: 'Dandelion', name_pl: 'Mniszek lekarski', category: 'Vegetables',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [3, 6] },
@@ -296,7 +301,23 @@ const products = [
     },
   },
   {
-    name: 'Pumpkin', category: 'Vegetables',
+    name: 'Eggplant', name_pl: 'Bakłażan', category: 'Vegetables',
+    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Spain:    { regions: null,         months: [1, 12] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [6, 10] },
+    },
+  },
+  {
+    name: 'Tomato', name_pl: 'Pomidor', category: 'Vegetables',
+    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ['łódzkie','mazowieckie','lubelskie','małopolskie','podkarpackie','świętokrzyskie'], months: [7, 9] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [6, 10] },
+    },
+  },
+  {
+    name: 'Pumpkin', name_pl: 'Dynia', category: 'Vegetables',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [9, 12] },
@@ -304,7 +325,7 @@ const products = [
     },
   },
   {
-    name: 'Cauliflower', category: 'Vegetables',
+    name: 'Cauliflower', name_pl: 'Kalafior', category: 'Vegetables',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [6, 10] },
@@ -312,7 +333,7 @@ const products = [
     },
   },
   {
-    name: 'Cabbage', category: 'Vegetables',
+    name: 'Cabbage', name_pl: 'Kapusta', category: 'Vegetables',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [8, 3] },
@@ -320,7 +341,7 @@ const products = [
     },
   },
   {
-    name: 'Celeriac', category: 'Vegetables',
+    name: 'Savoy cabbage', name_pl: 'Kapusta włoska', category: 'Vegetables',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [9, 2] },
@@ -328,7 +349,15 @@ const products = [
     },
   },
   {
-    name: 'Kale', category: 'Vegetables',
+    name: 'Celeriac', name_pl: 'Seler korzeniowy', category: 'Vegetables',
+    cycle_phase: ['lutealna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [9, 2] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [9, 2] },
+    },
+  },
+  {
+    name: 'Kale', name_pl: 'Jarmuż', category: 'Vegetables',
     cycle_phase: ['lutealna', 'menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [9, 2] },
@@ -336,7 +365,7 @@ const products = [
     },
   },
   {
-    name: 'Cucumber', category: 'Vegetables',
+    name: 'Cucumber', name_pl: 'Ogórek', category: 'Vegetables',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [6, 9] },
@@ -344,7 +373,7 @@ const products = [
     },
   },
   {
-    name: 'Garlic', category: 'Vegetables',
+    name: 'Garlic', name_pl: 'Czosnek', category: 'Vegetables',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['lubelskie','mazowieckie','łódzkie','kujawsko-pomorskie','wielkopolskie'], months: [7, 12] },
@@ -352,7 +381,7 @@ const products = [
     },
   },
   {
-    name: 'Leek', category: 'Vegetables',
+    name: 'Leek', name_pl: 'Por', category: 'Vegetables',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [9, 3] },
@@ -360,7 +389,7 @@ const products = [
     },
   },
   {
-    name: 'Onion', category: 'Vegetables',
+    name: 'Onion', name_pl: 'Cebula', category: 'Vegetables',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [7, 4] },
@@ -368,7 +397,7 @@ const products = [
     },
   },
   {
-    name: 'Parsnip', category: 'Vegetables',
+    name: 'Parsnip', name_pl: 'Pasternak', category: 'Vegetables',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [9, 3] },
@@ -376,7 +405,7 @@ const products = [
     },
   },
   {
-    name: 'Radish', category: 'Vegetables',
+    name: 'Radish', name_pl: 'Rzodkiewka', category: 'Vegetables',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [4, 10] },
@@ -384,7 +413,16 @@ const products = [
     },
   },
   {
-    name: 'Marrow', category: 'Vegetables',
+    name: 'Daikon', name_pl: 'Biała rzodkiew', category: 'Vegetables',
+    cycle_phase: ['lutealna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [9, 3] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [9, 3] },
+      China:    { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Marrow', name_pl: 'Kabaczek', category: 'Vegetables',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [6, 9] },
@@ -392,7 +430,7 @@ const products = [
     },
   },
   {
-    name: 'Potato', category: 'Vegetables',
+    name: 'Potato', name_pl: 'Ziemniak', category: 'Vegetables',
     cycle_phase: ['lutealna'], anti_inflammatory: false,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [7, 3] },
@@ -400,21 +438,29 @@ const products = [
     },
   },
   {
-    name: 'Ginger', category: 'Vegetables',
+    name: 'Ginger', name_pl: 'Imbir', category: 'Vegetables',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       India: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Sweet potato', category: 'Vegetables',
+    name: 'Sweet potato', name_pl: 'Słodki ziemniak', category: 'Vegetables',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Peru: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Beetroot', category: 'Vegetables',
+    name: 'Watercress', name_pl: 'Rukiew wodna', category: 'Vegetables',
+    cycle_phase: ['lutealna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [4, 10] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [3, 10] },
+    },
+  },
+  {
+    name: 'Beetroot', name_pl: 'Buraki', category: 'Vegetables',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [8, 12] },
@@ -422,32 +468,132 @@ const products = [
     },
   },
   {
-    name: 'Button mushroom', category: 'Vegetables',
-    cycle_phase: ['menstruacyjna'], anti_inflammatory: false,
+    name: 'Button mushroom', name_pl: 'Pieczarka', category: 'Vegetables',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [1, 12] },
       Bulgaria: { regions: ALL_BULGARIA, months: [1, 12] },
     },
   },
   {
-    name: 'Shiitake mushroom', category: 'Vegetables',
+    name: 'Shiitake mushroom', name_pl: 'Shitake', category: 'Vegetables',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       China: { regions: null, months: [1, 12] },
     },
   },
-
-  // ── FRUITS ─────────────────────────────────────────────────────────────────
   {
-    name: 'Sour cherry', category: 'Fruits',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    name: 'Burdock', name_pl: 'Łopian', category: 'Vegetables',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
-      Poland:   { regions: ['lubelskie','mazowieckie','łódzkie','świętokrzyskie','małopolskie'], months: [6, 7] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [5, 7] },
+      Japan:  { regions: null, months: [1, 12] },
+      Poland: { regions: ALL_POLAND, months: [4, 6] },
     },
   },
   {
-    name: 'Plum', category: 'Fruits',
+    name: 'Water chestnut', name_pl: 'Orzech wodny', category: 'Vegetables',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      China: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Water caltrop', name_pl: 'Kotewka', category: 'Vegetables',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ['warmińsko-mazurskie','podlaskie','mazowieckie','lubelskie'], months: [8, 10] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [8, 10] },
+    },
+  },
+  // seaweed & algae — moved to Vegetables
+  {
+    name: 'Spirulina', name_pl: 'Spirulina', category: 'Vegetables',
+    cycle_phase: ['lutealna'], anti_inflammatory: true,
+    localAvailability: {
+      USA: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Kelp', name_pl: 'Kelp', category: 'Vegetables',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Japan: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Kombu', name_pl: 'Kombu', category: 'Vegetables',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Japan: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Dulse', name_pl: 'Dulse', category: 'Vegetables',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Ireland: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Hijiki', name_pl: 'Hijiki', category: 'Vegetables',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Japan: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Wakame', name_pl: 'Wakame', category: 'Vegetables',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Japan: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Nori', name_pl: 'Nori', category: 'Vegetables',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      Japan: { regions: null, months: [1, 12] },
+    },
+  },
+
+  // ── FRUITS ─────────────────────────────────────────────────────────────────
+  {
+    name: 'Avocado', name_pl: 'Awokado', category: 'Fruits',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Mexico: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Grapefruit', name_pl: 'Grejpfrut', category: 'Fruits',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Israel: { regions: null, months: [11, 4] },
+    },
+  },
+  {
+    name: 'Lemon', name_pl: 'Cytryna', category: 'Fruits',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Spain: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Lime', name_pl: 'Limonka', category: 'Fruits',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Mexico: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Orange', name_pl: 'Pomarańcza', category: 'Fruits',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Spain: { regions: null, months: [11, 4] },
+    },
+  },
+  {
+    name: 'Plum', name_pl: 'Śliwka', category: 'Fruits',
     cycle_phase: ['folikularna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['małopolskie','podkarpackie','świętokrzyskie','lubelskie','dolnośląskie'], months: [7, 10] },
@@ -455,35 +601,7 @@ const products = [
     },
   },
   {
-    name: 'Lemon', category: 'Fruits',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Spain: { regions: null, months: [1, 12] },
-    },
-  },
-  {
-    name: 'Orange', category: 'Fruits',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Spain: { regions: null, months: [11, 4] },
-    },
-  },
-  {
-    name: 'Grapefruit', category: 'Fruits',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Israel: { regions: null, months: [11, 4] },
-    },
-  },
-  {
-    name: 'Avocado', category: 'Fruits',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Mexico: { regions: null, months: [1, 12] },
-    },
-  },
-  {
-    name: 'Pomegranate', category: 'Fruits',
+    name: 'Pomegranate', name_pl: 'Granat', category: 'Fruits',
     cycle_phase: ['folikularna'], anti_inflammatory: true,
     localAvailability: {
       Turkey:   { regions: null, months: [9, 2] },
@@ -491,23 +609,23 @@ const products = [
     },
   },
   {
-    name: 'Raspberry', category: 'Fruits',
-    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
+    name: 'Sour cherry', name_pl: 'Wiśnia', category: 'Fruits',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
     localAvailability: {
-      Poland:   { regions: ALL_POLAND,   months: [6, 9] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [6, 9] },
+      Poland:   { regions: ['lubelskie','mazowieckie','łódzkie','świętokrzyskie','małopolskie'], months: [6, 7] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [5, 7] },
     },
   },
   {
-    name: 'Strawberry', category: 'Fruits',
-    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
+    name: 'Lychee', name_pl: 'Liczi', category: 'Fruits',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
     localAvailability: {
-      Poland:   { regions: ['mazowieckie','lubelskie','łódzkie','kujawsko-pomorskie','wielkopolskie'], months: [5, 7] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [4, 6] },
+      China:    { regions: null, months: [5, 8] },
+      Thailand: { regions: null, months: [4, 7] },
     },
   },
   {
-    name: 'Apricot', category: 'Fruits',
+    name: 'Apricot', name_pl: 'Morela', category: 'Fruits',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['dolnośląskie','małopolskie','podkarpackie','śląskie','opolskie'], months: [6, 8] },
@@ -515,7 +633,22 @@ const products = [
     },
   },
   {
-    name: 'Fig', category: 'Fruits',
+    name: 'Cantaloupe', name_pl: 'Kantalupa', category: 'Fruits',
+    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Spain:    { regions: null,         months: [6, 9] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [6, 9] },
+    },
+  },
+  {
+    name: 'Coconut', name_pl: 'Kokos', category: 'Fruits',
+    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Thailand: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Fig', name_pl: 'Figi', category: 'Fruits',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Turkey:   { regions: null, months: [7, 10] },
@@ -523,14 +656,38 @@ const products = [
     },
   },
   {
-    name: 'Coconut', category: 'Fruits',
+    name: 'Guava', name_pl: 'Gujawa', category: 'Fruits',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
-      Thailand: { regions: null, months: [1, 12] },
+      Brazil: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Apple', category: 'Fruits',
+    name: 'Persimmon', name_pl: 'Persymona', category: 'Fruits',
+    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Spain:    { regions: null, months: [10, 1] },
+      Bulgaria: { regions: ['Plovdiv','Haskovo','Kardzhali','Stara Zagora','Blagoevgrad'], months: [9, 12] },
+    },
+  },
+  {
+    name: 'Raspberry', name_pl: 'Malina', category: 'Fruits',
+    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [6, 9] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [6, 9] },
+    },
+  },
+  {
+    name: 'Strawberry', name_pl: 'Truskawka', category: 'Fruits',
+    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ['mazowieckie','lubelskie','łódzkie','kujawsko-pomorskie','wielkopolskie'], months: [5, 7] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [4, 6] },
+    },
+  },
+  {
+    name: 'Apple', name_pl: 'Jabłko', category: 'Fruits',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [8, 3] },
@@ -538,15 +695,14 @@ const products = [
     },
   },
   {
-    name: 'Pear', category: 'Fruits',
+    name: 'Dates', name_pl: 'Daktyle', category: 'Fruits',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
-      Poland:   { regions: ['mazowieckie','łódzkie','lubelskie','świętokrzyskie','podkarpackie'], months: [8, 11] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [7, 11] },
+      Tunisia: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Peach', category: 'Fruits',
+    name: 'Peach', name_pl: 'Brzoskwinia', category: 'Fruits',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['dolnośląskie','opolskie','śląskie','małopolskie','podkarpackie'], months: [7, 9] },
@@ -554,21 +710,22 @@ const products = [
     },
   },
   {
-    name: 'Dates', category: 'Fruits',
+    name: 'Pear', name_pl: 'Gruszka', category: 'Fruits',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
-      Tunisia: { regions: null, months: [1, 12] },
+      Poland:   { regions: ['mazowieckie','łódzkie','lubelskie','świętokrzyskie','podkarpackie'], months: [8, 11] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [7, 11] },
     },
   },
   {
-    name: 'Raisins', category: 'Fruits',
+    name: 'Raisins', name_pl: 'Rodzynki', category: 'Fruits',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Turkey: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Blackberry', category: 'Fruits',
+    name: 'Blackberry', name_pl: 'Jeżyna', category: 'Fruits',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['dolnośląskie','lubuskie','zachodniopomorskie','małopolskie','podkarpackie'], months: [7, 9] },
@@ -576,7 +733,7 @@ const products = [
     },
   },
   {
-    name: 'Blueberry', category: 'Fruits',
+    name: 'Blueberry', name_pl: 'Jagoda', category: 'Fruits',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['warmińsko-mazurskie','podlaskie','pomorskie','zachodniopomorskie'], months: [6, 9] },
@@ -584,7 +741,7 @@ const products = [
     },
   },
   {
-    name: 'Grapes', category: 'Fruits',
+    name: 'Grapes', name_pl: 'Winogrona', category: 'Fruits',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['dolnośląskie','lubuskie','opolskie','śląskie','małopolskie'], months: [8, 10] },
@@ -592,7 +749,7 @@ const products = [
     },
   },
   {
-    name: 'Melon', category: 'Fruits',
+    name: 'Melon', name_pl: 'Melon', category: 'Fruits',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Spain:    { regions: null,         months: [5, 10] },
@@ -600,23 +757,24 @@ const products = [
     },
   },
   {
-    name: 'Watermelon', category: 'Fruits',
+    name: 'Watermelon', name_pl: 'Arbuz', category: 'Fruits',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Bulgaria: { regions: ALL_BULGARIA, months: [6, 9] },
     },
   },
   {
-    name: 'Rose hip', category: 'Fruits',
+    name: 'Rose hip', name_pl: 'Dzika róża', category: 'Fruits',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Bulgaria: { regions: ALL_BULGARIA, months: [8, 11] },
+      Poland:   { regions: ALL_POLAND,   months: [8, 11] },
     },
   },
 
   // ── LEGUMES ────────────────────────────────────────────────────────────────
   {
-    name: 'Peas', category: 'Legumes',
+    name: 'Peas', name_pl: 'Groch', category: 'Legumes',
     cycle_phase: ['folikularna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [1, 12] },
@@ -624,28 +782,51 @@ const products = [
     },
   },
   {
-    name: 'Green lentils', category: 'Legumes',
+    name: 'Green lentils', name_pl: 'Soczewica zielona', category: 'Legumes',
     cycle_phase: ['folikularna'], anti_inflammatory: true,
     localAvailability: {
       Canada: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Mung beans', category: 'Legumes',
+    name: 'Lima beans', name_pl: 'Fasola Lima', category: 'Legumes',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      USA:      { regions: null, months: [1, 12] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Mung beans', name_pl: 'Fasolka mung', category: 'Legumes',
     cycle_phase: ['folikularna'], anti_inflammatory: true,
     localAvailability: {
       India: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Red lentils', category: 'Legumes',
+    name: 'Split peas', name_pl: 'Groch łuskany', category: 'Legumes',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Canada: { regions: null, months: [1, 12] },
+      Poland: { regions: ALL_POLAND, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Yard-long beans', name_pl: 'Wspięga wężowata', category: 'Legumes',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      China: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Red lentils', name_pl: 'Soczewica czerwona', category: 'Legumes',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Canada: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Runner beans', category: 'Legumes',
+    name: 'Runner beans', name_pl: 'Fasola szparagowa', category: 'Legumes',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['podkarpackie','małopolskie','lubelskie','świętokrzyskie','śląskie'], months: [1, 12] },
@@ -653,7 +834,7 @@ const products = [
     },
   },
   {
-    name: 'Chickpeas', category: 'Legumes',
+    name: 'Chickpeas', name_pl: 'Ciecierzyca', category: 'Legumes',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       India:    { regions: null,         months: [1, 12] },
@@ -661,102 +842,115 @@ const products = [
     },
   },
   {
-    name: 'Black beans', category: 'Legumes',
-    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
-    localAvailability: {
-      Mexico: { regions: null, months: [1, 12] },
-    },
-  },
-  {
-    name: 'Kidney beans', category: 'Legumes',
-    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
-    localAvailability: {
-      Argentina: { regions: null, months: [1, 12] },
-    },
-  },
-  {
-    name: 'Azuki beans', category: 'Legumes',
+    name: 'Azuki beans', name_pl: 'Fasola azuki', category: 'Legumes',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Japan: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Black soybeans', category: 'Legumes',
+    name: 'Black beans', name_pl: 'Fasola czarna', category: 'Legumes',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Mexico: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Black soybeans', name_pl: 'Soja czarna', category: 'Legumes',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       China: { regions: null, months: [1, 12] },
     },
   },
+  {
+    name: 'Kidney beans', name_pl: 'Fasola czerwona', category: 'Legumes',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Argentina: { regions: null, months: [1, 12] },
+    },
+  },
 
   // ── NUTS & SEEDS ───────────────────────────────────────────────────────────
   {
-    name: 'Flaxseed', category: 'Nuts & Seeds',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Poland: { regions: ['lubelskie','mazowieckie','kujawsko-pomorskie','łódzkie','wielkopolskie'], months: [1, 12] },
-    },
-  },
-  {
-    name: 'Pumpkin seeds', category: 'Nuts & Seeds',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Poland:   { regions: ALL_POLAND,   months: [9, 12] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [9, 12] },
-    },
-  },
-  {
-    name: 'Brazil nut', category: 'Nuts & Seeds',
+    name: 'Brazil nut', name_pl: 'Orzech brazylijski', category: 'Nuts & Seeds',
     cycle_phase: ['folikularna'], anti_inflammatory: true,
     localAvailability: {
       Brazil: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Cashew', category: 'Nuts & Seeds',
+    name: 'Cashew', name_pl: 'Orzech nerkowca', category: 'Nuts & Seeds',
     cycle_phase: ['folikularna'], anti_inflammatory: true,
     localAvailability: {
       Vietnam: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Almonds', category: 'Nuts & Seeds',
+    name: 'Chia seeds', name_pl: 'Nasiona chia', category: 'Nuts & Seeds',
+    cycle_phase: ['folikularna', 'owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Mexico: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Flaxseed', name_pl: 'Siemię lniane', category: 'Nuts & Seeds',
+    cycle_phase: ['folikularna', 'owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland: { regions: ['lubelskie','mazowieckie','kujawsko-pomorskie','łódzkie','wielkopolskie'], months: [1, 12] },
+    },
+  },
+  {
+    name: 'Hemp seeds', name_pl: 'Nasiona konopi', category: 'Nuts & Seeds',
+    cycle_phase: ['folikularna', 'owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland: { regions: ALL_POLAND, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Pumpkin seeds', name_pl: 'Pestki dyni', category: 'Nuts & Seeds',
+    cycle_phase: ['folikularna', 'owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [9, 12] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [9, 12] },
+    },
+  },
+  {
+    name: 'Almonds', name_pl: 'Migdały', category: 'Nuts & Seeds',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       USA: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Pistachios', category: 'Nuts & Seeds',
+    name: 'Pecans', name_pl: 'Orzeszki pekan', category: 'Nuts & Seeds',
+    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      USA: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Pistachios', name_pl: 'Pistacje', category: 'Nuts & Seeds',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Iran: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Pecans', category: 'Nuts & Seeds',
-    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
-    localAvailability: {
-      USA: { regions: null, months: [1, 12] },
-    },
-  },
-  {
-    name: 'Walnuts', category: 'Nuts & Seeds',
+    name: 'Pine nuts', name_pl: 'Orzeszki piniowe', category: 'Nuts & Seeds',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
-      Poland:   { regions: ['dolnośląskie','lubuskie','opolskie','śląskie','małopolskie'], months: [9, 12] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [9, 12] },
+      Italy: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Sesame', category: 'Nuts & Seeds',
+    name: 'Sesame', name_pl: 'Sezam', category: 'Nuts & Seeds',
     cycle_phase: ['lutealna', 'menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Ethiopia: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Sunflower seeds', category: 'Nuts & Seeds',
+    name: 'Sunflower seeds', name_pl: 'Nasiona słonecznika', category: 'Nuts & Seeds',
     cycle_phase: ['lutealna', 'menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['lubelskie','mazowieckie','łódzkie','kujawsko-pomorskie','wielkopolskie'], months: [8, 11] },
@@ -764,14 +958,15 @@ const products = [
     },
   },
   {
-    name: 'Pine nuts', category: 'Nuts & Seeds',
+    name: 'Walnuts', name_pl: 'Orzechy włoskie', category: 'Nuts & Seeds',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
-      Italy: { regions: null, months: [1, 12] },
+      Poland:   { regions: ['dolnośląskie','lubuskie','opolskie','śląskie','małopolskie'], months: [9, 12] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [9, 12] },
     },
   },
   {
-    name: 'Chestnuts', category: 'Nuts & Seeds',
+    name: 'Chestnuts', name_pl: 'Kasztany', category: 'Nuts & Seeds',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['dolnośląskie','śląskie','małopolskie','opolskie','lubuskie'], months: [9, 11] },
@@ -781,7 +976,7 @@ const products = [
 
   // ── MEAT ───────────────────────────────────────────────────────────────────
   {
-    name: 'Chicken', category: 'Meat',
+    name: 'Chicken', name_pl: 'Kurczak', category: 'Meat',
     cycle_phase: ['folikularna'], anti_inflammatory: false,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [1, 12] },
@@ -789,7 +984,15 @@ const products = [
     },
   },
   {
-    name: 'Lamb', category: 'Meat',
+    name: 'Eggs', name_pl: 'Jajka', category: 'Meat',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [1, 12] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Lamb', name_pl: 'Jagnięcina', category: 'Meat',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['podkarpackie','małopolskie','śląskie','lubelskie','warmińsko-mazurskie'], months: [3, 9] },
@@ -797,7 +1000,7 @@ const products = [
     },
   },
   {
-    name: 'Beef', category: 'Meat',
+    name: 'Beef', name_pl: 'Wołowina', category: 'Meat',
     cycle_phase: ['lutealna'], anti_inflammatory: false,
     localAvailability: {
       Poland:   { regions: ['podlaskie','mazowieckie','warmińsko-mazurskie','kujawsko-pomorskie','wielkopolskie'], months: [1, 12] },
@@ -805,7 +1008,7 @@ const products = [
     },
   },
   {
-    name: 'Turkey', category: 'Meat',
+    name: 'Turkey', name_pl: 'Indyk', category: 'Meat',
     cycle_phase: ['lutealna'], anti_inflammatory: false,
     localAvailability: {
       Poland:   { regions: ['wielkopolskie','kujawsko-pomorskie','mazowieckie','łódzkie','lubelskie'], months: [1, 12] },
@@ -813,24 +1016,24 @@ const products = [
     },
   },
   {
-    name: 'Pork', category: 'Meat',
+    name: 'Duck', name_pl: 'Kaczka', category: 'Meat',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: false,
+    localAvailability: {
+      Poland: { regions: ['wielkopolskie','mazowieckie','kujawsko-pomorskie','podlaskie','łódzkie'], months: [1, 12] },
+    },
+  },
+  {
+    name: 'Pork', name_pl: 'Wieprzowina', category: 'Meat',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: false,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [1, 12] },
       Bulgaria: { regions: ALL_BULGARIA, months: [1, 12] },
     },
   },
-  {
-    name: 'Duck', category: 'Meat',
-    cycle_phase: ['menstruacyjna'], anti_inflammatory: false,
-    localAvailability: {
-      Poland: { regions: ['wielkopolskie','mazowieckie','kujawsko-pomorskie','podlaskie','łódzkie'], months: [1, 12] },
-    },
-  },
 
   // ── SEAFOOD ────────────────────────────────────────────────────────────────
   {
-    name: 'Trout', category: 'Seafood',
+    name: 'Trout', name_pl: 'Pstrąg', category: 'Seafood',
     cycle_phase: ['folikularna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['małopolskie','podkarpackie','dolnośląskie','śląskie','świętokrzyskie','warmińsko-mazurskie'], months: [3, 10] },
@@ -838,7 +1041,7 @@ const products = [
     },
   },
   {
-    name: 'Mussels', category: 'Seafood',
+    name: 'Mussels', name_pl: 'Małże', category: 'Seafood',
     cycle_phase: ['folikularna', 'menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['pomorskie','zachodniopomorskie'], months: [9, 4] },
@@ -846,7 +1049,7 @@ const products = [
     },
   },
   {
-    name: 'Crabs', category: 'Seafood',
+    name: 'Crabs', name_pl: 'Kraby', category: 'Seafood',
     cycle_phase: ['folikularna', 'menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['pomorskie','zachodniopomorskie'], months: [5, 11] },
@@ -854,49 +1057,49 @@ const products = [
     },
   },
   {
-    name: 'Baltic salmon', category: 'Seafood',
+    name: 'Baltic salmon', name_pl: 'Łosoś bałtycki', category: 'Seafood',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland: { regions: ['pomorskie','zachodniopomorskie'], months: [6, 10] },
     },
   },
   {
-    name: 'Norwegian salmon', category: 'Seafood',
+    name: 'Norwegian salmon', name_pl: 'Łosoś norweski', category: 'Seafood',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Norway: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Shrimp', category: 'Seafood',
+    name: 'Shrimp', name_pl: 'Krewetki', category: 'Seafood',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Ecuador: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Tuna', category: 'Seafood',
-    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
-    localAvailability: {
-      Thailand: { regions: null, months: [1, 12] },
-    },
-  },
-  {
-    name: 'Sprat (Black Sea)', category: 'Seafood',
+    name: 'Sprat (Black Sea)', name_pl: 'Szprot (Morze Czarne)', category: 'Seafood',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       Bulgaria: { regions: ['Varna','Burgas'], months: [10, 4] },
     },
   },
   {
-    name: 'Cod', category: 'Seafood',
+    name: 'Tuna', name_pl: 'Tuńczyk', category: 'Seafood',
+    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Thailand: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Cod', name_pl: 'Dorsz', category: 'Seafood',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland: { regions: ['pomorskie','zachodniopomorskie'], months: [10, 4] },
     },
   },
   {
-    name: 'Flounder', category: 'Seafood',
+    name: 'Flounder', name_pl: 'Flądra', category: 'Seafood',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ['pomorskie','zachodniopomorskie'], months: [4, 11] },
@@ -904,28 +1107,21 @@ const products = [
     },
   },
   {
-    name: 'Halibut', category: 'Seafood',
+    name: 'Halibut', name_pl: 'Halibut', category: 'Seafood',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Norway: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Sardines', category: 'Seafood',
+    name: 'Black Sea mackerel', name_pl: 'Makrela (Morze Czarne)', category: 'Seafood',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
-      Portugal: { regions: null, months: [1, 12] },
+      Bulgaria: { regions: ['Varna','Burgas'], months: [9, 11] },
     },
   },
   {
-    name: 'Herring', category: 'Seafood',
-    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
-    localAvailability: {
-      Poland: { regions: ['pomorskie','zachodniopomorskie','warmińsko-mazurskie'], months: [10, 3] },
-    },
-  },
-  {
-    name: 'Carp', category: 'Seafood',
+    name: 'Carp', name_pl: 'Karp', category: 'Seafood',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: false,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [10, 1] },
@@ -933,82 +1129,109 @@ const products = [
     },
   },
   {
-    name: 'Oysters', category: 'Seafood',
+    name: 'Catfish', name_pl: 'Sum', category: 'Seafood',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: false,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [5, 10] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [5, 10] },
+    },
+  },
+  {
+    name: 'Herring', name_pl: 'Śledź', category: 'Seafood',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland: { regions: ['pomorskie','zachodniopomorskie','warmińsko-mazurskie'], months: [10, 3] },
+    },
+  },
+  {
+    name: 'Lobster', name_pl: 'Homar', category: 'Seafood',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      France:  { regions: null, months: [1, 12] },
+      Norway:  { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Octopus', name_pl: 'Ośmiornica', category: 'Seafood',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Spain:    { regions: null, months: [1, 12] },
+      Bulgaria: { regions: ['Varna','Burgas'], months: [5, 10] },
+    },
+  },
+  {
+    name: 'Oysters', name_pl: 'Ostrygi', category: 'Seafood',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       France: { regions: null, months: [9, 4] },
     },
   },
   {
-    name: 'Black Sea mackerel', category: 'Seafood',
+    name: 'Sardines', name_pl: 'Sardynki', category: 'Seafood',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
-      Bulgaria: { regions: ['Varna','Burgas'], months: [9, 11] },
+      Portugal: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Scallops', name_pl: 'Przegrzebki', category: 'Seafood',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      France:   { regions: null, months: [9, 4] },
+      Bulgaria: { regions: ['Varna','Burgas'], months: [5, 10] },
+    },
+  },
+  {
+    name: 'Squid', name_pl: 'Kalmary', category: 'Seafood',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Spain:    { regions: null, months: [1, 12] },
+      Bulgaria: { regions: ['Varna','Burgas'], months: [5, 10] },
     },
   },
 
-  // ── OTHER ──────────────────────────────────────────────────────────────────
+  // ── OILS ───────────────────────────────────────────────────────────────────
   {
-    name: 'Eggs', category: 'Other',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Poland:   { regions: ALL_POLAND,   months: [1, 12] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [1, 12] },
-    },
-  },
-  {
-    name: 'Sauerkraut', category: 'Other',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Poland: { regions: ALL_POLAND, months: [10, 3] },
-    },
-  },
-  {
-    name: 'Kefir', category: 'Other',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Poland:   { regions: ALL_POLAND,   months: [1, 12] },
-      Bulgaria: { regions: ALL_BULGARIA, months: [1, 12] },
-    },
-  },
-  {
-    name: 'Bulgarian yoghurt', category: 'Other',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Bulgaria: { regions: ALL_BULGARIA, months: [1, 12] },
-    },
-  },
-  {
-    name: 'Peanut butter', category: 'Other',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      USA: { regions: null, months: [1, 12] },
-    },
-  },
-  {
-    name: 'Olives', category: 'Other',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    name: 'Extra virgin olive oil', name_pl: 'Oliwa z oliwek', category: 'Oils',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
     localAvailability: {
       Greece:   { regions: null, months: [1, 12] },
+      Spain:    { regions: null, months: [1, 12] },
       Bulgaria: { regions: ['Plovdiv','Haskovo','Kardzhali','Stara Zagora','Pazardzhik'], months: [10, 12] },
     },
   },
   {
-    name: 'Turmeric', category: 'Other',
+    name: 'Flaxseed oil', name_pl: 'Olej lniany', category: 'Oils',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      Poland: { regions: ALL_POLAND, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Avocado oil', name_pl: 'Olej z awokado', category: 'Oils',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      Mexico: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Coconut oil', name_pl: 'Olej kokosowy', category: 'Oils',
+    cycle_phase: ALL_PHASES, anti_inflammatory: false,
+    localAvailability: {
+      Philippines: { regions: null, months: [1, 12] },
+    },
+  },
+
+  // ── SPICES & HERBS ─────────────────────────────────────────────────────────
+  {
+    name: 'Turmeric', name_pl: 'Kurkuma', category: 'Spices',
     cycle_phase: ['owulacyjna'], anti_inflammatory: true,
     localAvailability: {
       India: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Dark chocolate', category: 'Other',
-    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
-    localAvailability: {
-      Belgium: { regions: null, months: [1, 12] },
-    },
-  },
-  {
-    name: 'Mint', category: 'Other',
+    name: 'Mint', name_pl: 'Mięta', category: 'Spices',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [5, 9] },
@@ -1016,7 +1239,224 @@ const products = [
     },
   },
   {
-    name: 'Cottage cheese', category: 'Other',
+    name: 'Peppermint', name_pl: 'Mięta pieprzowa', category: 'Spices',
+    cycle_phase: ['lutealna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [6, 9] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [5, 9] },
+    },
+  },
+  {
+    name: 'Basil', name_pl: 'Bazylia', category: 'Spices',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [6, 9] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [5, 10] },
+    },
+  },
+  {
+    name: 'Black pepper', name_pl: 'Czarny pieprz', category: 'Spices',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      India:    { regions: null, months: [1, 12] },
+      Vietnam:  { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Cardamom', name_pl: 'Kardamon', category: 'Spices',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      India: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Chili', name_pl: 'Chili', category: 'Spices',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      Bulgaria: { regions: ALL_BULGARIA, months: [7, 10] },
+      Spain:    { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Cinnamon', name_pl: 'Cynamon', category: 'Spices',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      'Sri Lanka': { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Cloves', name_pl: 'Goździki', category: 'Spices',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      Indonesia: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Oregano', name_pl: 'Oregano', category: 'Spices',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [6, 9] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [5, 9] },
+    },
+  },
+  {
+    name: 'Rosemary', name_pl: 'Rozmaryn', category: 'Spices',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      Bulgaria: { regions: ALL_BULGARIA, months: [1, 12] },
+      Spain:    { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Saffron', name_pl: 'Szafran', category: 'Spices',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      Iran:     { regions: null, months: [1, 12] },
+      Bulgaria: { regions: ['Plovdiv','Pazardzhik','Stara Zagora'], months: [10, 11] },
+    },
+  },
+  {
+    name: 'Sage', name_pl: 'Szałwia', category: 'Spices',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [5, 9] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [4, 9] },
+    },
+  },
+  {
+    name: 'Thyme', name_pl: 'Tymianek', category: 'Spices',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [5, 10] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [4, 10] },
+    },
+  },
+
+  // ── BEVERAGES ──────────────────────────────────────────────────────────────
+  {
+    name: 'Coffee', name_pl: 'Kawa', category: 'Beverages',
+    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Brazil:   { regions: null, months: [1, 12] },
+      Ethiopia: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Green tea', name_pl: 'Zielona herbata', category: 'Beverages',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      China:  { regions: null, months: [1, 12] },
+      Japan:  { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Decaf coffee', name_pl: 'Kawa bezkofeinowa', category: 'Beverages',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Brazil: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Black tea', name_pl: 'Herbata czarna', category: 'Beverages',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      China:      { regions: null, months: [1, 12] },
+      'Sri Lanka':{ regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Kombucha', name_pl: 'Kombucha', category: 'Beverages',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [1, 12] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Rooibos', name_pl: 'Rooibos', category: 'Beverages',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      'South Africa': { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'White tea', name_pl: 'Herbata biała', category: 'Beverages',
+    cycle_phase: ALL_PHASES, anti_inflammatory: true,
+    localAvailability: {
+      China: { regions: null, months: [1, 12] },
+    },
+  },
+
+  // ── OTHER ──────────────────────────────────────────────────────────────────
+  {
+    name: 'Apple cider vinegar', name_pl: 'Ocet jabłkowy', category: 'Other',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [1, 12] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Bulgarian yoghurt', name_pl: 'Jogurt bułgarski', category: 'Other',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Bulgaria: { regions: ALL_BULGARIA, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Gherkins', name_pl: 'Korniszony', category: 'Other',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [7, 9] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [7, 9] },
+    },
+  },
+  {
+    name: 'Kefir', name_pl: 'Kefir', category: 'Other',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland:   { regions: ALL_POLAND,   months: [1, 12] },
+      Bulgaria: { regions: ALL_BULGARIA, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Olives', name_pl: 'Oliwki', category: 'Other',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Greece:   { regions: null, months: [1, 12] },
+      Bulgaria: { regions: ['Plovdiv','Haskovo','Kardzhali','Stara Zagora','Pazardzhik'], months: [10, 12] },
+    },
+  },
+  {
+    name: 'Peanut butter', name_pl: 'Masło orzechowe', category: 'Other',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      USA: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Rose petal jam', name_pl: 'Dżem z płatków róży', category: 'Other',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Bulgaria: { regions: ['Plovdiv','Kazanlak','Stara Zagora','Pazardzhik','Sofia Oblast'], months: [5, 6] },
+    },
+  },
+  {
+    name: 'Sauerkraut', name_pl: 'Kapusta kiszona', category: 'Other',
+    cycle_phase: ['folikularna'], anti_inflammatory: true,
+    localAvailability: {
+      Poland: { regions: ALL_POLAND, months: [10, 3] },
+    },
+  },
+  {
+    name: 'Dark chocolate', name_pl: 'Ciemna czekolada', category: 'Other',
+    cycle_phase: ['owulacyjna'], anti_inflammatory: true,
+    localAvailability: {
+      Belgium: { regions: null, months: [1, 12] },
+    },
+  },
+  {
+    name: 'Cottage cheese', name_pl: 'Twaróg', category: 'Other',
     cycle_phase: ['lutealna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [1, 12] },
@@ -1024,14 +1464,14 @@ const products = [
     },
   },
   {
-    name: 'Spirulina', category: 'Other',
-    cycle_phase: ['lutealna'], anti_inflammatory: true,
+    name: 'Miso', name_pl: 'Miso', category: 'Other',
+    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
-      USA: { regions: null, months: [1, 12] },
+      Japan: { regions: null, months: [1, 12] },
     },
   },
   {
-    name: 'Nettle', category: 'Other',
+    name: 'Nettle', name_pl: 'Pokrzywa', category: 'Other',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Poland:   { regions: ALL_POLAND,   months: [3, 6] },
@@ -1039,31 +1479,10 @@ const products = [
     },
   },
   {
-    name: 'Green tea', category: 'Other',
-    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
-    localAvailability: {
-      China: { regions: null, months: [1, 12] },
-    },
-  },
-  {
-    name: 'Miso', category: 'Other',
+    name: 'Tamari', name_pl: 'Tamari', category: 'Other',
     cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
     localAvailability: {
       Japan: { regions: null, months: [1, 12] },
-    },
-  },
-  {
-    name: 'Tamari', category: 'Other',
-    cycle_phase: ['menstruacyjna'], anti_inflammatory: true,
-    localAvailability: {
-      Japan: { regions: null, months: [1, 12] },
-    },
-  },
-  {
-    name: 'Rose petal jam', category: 'Other',
-    cycle_phase: ['folikularna'], anti_inflammatory: true,
-    localAvailability: {
-      Bulgaria: { regions: ['Plovdiv','Kazanlak','Stara Zagora','Pazardzhik','Sofia Oblast'], months: [5, 6] },
     },
   },
 ];

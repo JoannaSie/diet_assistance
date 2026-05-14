@@ -133,7 +133,8 @@ function renderFoodSlider() {
       return 0;
     });
     grouped[cat] = grouped[cat].map(p => ({
-      name: p.name, inSeason: p.inSeason, isLocal: p.isLocal,
+      name: lang === 'pl' ? (p.name_pl || p.name) : p.name,
+      inSeason: p.inSeason, isLocal: p.isLocal,
     }));
   });
 
